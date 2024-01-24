@@ -33,6 +33,6 @@ class MainController {
       exception.toString()
     }
 
-    return ResponseEntity.ok(hashMapOf("test" to response))
+    return ResponseEntity.ok(hashMapOf("response" to response))
   }
 }
