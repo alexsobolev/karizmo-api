@@ -1,3 +1,6 @@
 [[build.env]]
 name = "GOOGLE_RUNTIME_VERSION"
 value = "17"
+[[build.env]]
+name = "GOOGLE_ENTRYPOINT"
+value = "java --enable-preview -jar /workspace/build/libs/karizmo-0.0.1-SNAPSHOT.jar"
