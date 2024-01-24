@@ -14,6 +14,7 @@ import org.springframework.boot.autoconfigure.batch.BatchProperties.Job
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import java.util.UUID
@@ -91,5 +92,55 @@ class MainController {
     }
 
     return ResponseEntity.ok(response)
+  }
+
+  @GetMapping("/articles/{id}")
+  fun article(@PathVariable("id") id: Int): ResponseEntity<HashMap<String, HashMap<String, String>?>> {
+    val bigquery: BigQuery = BigQueryOptions.getDefaultInstance().getService()
+    val queryConfig: QueryJobConfiguration = QueryJobConfiguration.newBuilder(
+      "SELECT cms_id, headline, full_text  FROM `aspringer-hackathon24ber-6081.hackathon.articles` AS articles WHERE articles.cms_id = $id LIMIT 1"
+    ) // Use standard SQL syntax for queries.
+      // See: https://cloud.google.com/bigquery/sql-reference/
+      .setUseLegacySql(false)
+      .build()
+
+    // Create a job ID so that we can safely retry.
+
+    // Create a job ID so that we can safely retry.
+    val jobId: JobId = JobId.of(UUID.randomUUID().toString())
+    var queryJob = bigquery.create(JobInfo.newBuilder(queryConfig).setJobId(jobId).build())
+
+    // Wait for the query to complete.
+
+    // Wait for the query to complete.
+    queryJob = queryJob.waitFor()
+
+    // Check for errors
+
+    // Check for errors
+    if (queryJob == null) {
+      throw RuntimeException("Job no longer exists")
+    } else if (queryJob.getStatus().getError() != null) {
+      // You can also look at queryJob.getStatus().getExecutionErrors() for all
+      // errors, not just the latest one.
+      throw RuntimeException(queryJob.getStatus().getError().toString())
+    }
+
+    // Get the results.
+
+    // Get the results.
+    val result: TableResult = queryJob.getQueryResults()
+
+    // Print all pages of the results.
+
+    return ResponseEntity.ok(hashMapOf(
+      "article" to result.values.firstOrNull()?.let {
+        hashMapOf(
+          "cms_id" to it.get("cms_id").getStringValue(),
+          "headline" to it.get("headline").getStringValue(),
+          "full_text" to it.get("full_text").getStringValue()
+        )
+      }
+    ))
   }
 }
