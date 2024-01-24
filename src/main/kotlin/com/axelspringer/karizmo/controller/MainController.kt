@@ -35,7 +35,8 @@ class MainController {
       }
     } catch (exception: Exception) {
       println(exception)
-      exception.toString()
+      //exception.toString()
+      ""
     }
 
     return ResponseEntity.ok(hashMapOf("response" to response))
