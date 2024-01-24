@@ -23,6 +23,7 @@ dependencies {
 	implementation "org.springframework.boot:spring-boot-starter-web"
 	implementation 'org.jetbrains.kotlin:kotlin-reflect'
 	implementation 'com.google.cloud:google-cloud-vertexai:0.1.0'
+	implementation 'com.google.cloud:google-cloud-bigquery:2.36.0'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
