@@ -11,19 +11,21 @@ import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
 
 @Controller
 class MainController {
 
-  @GetMapping("/")
-  fun index(model: Model): ResponseEntity<HashMap<String, String>> {
+  @PostMapping("/", )
+  fun index(@RequestBody prompt: String): ResponseEntity<HashMap<String, String>> {
     val response = try {
       VertexAI("aspringer-hackathon24ber-6081", "us-central1").use { vertexAi ->
         val generationConfig: GenerationConfig =
           GenerationConfig.newBuilder().setMaxOutputTokens(8192).setTemperature(0.9f).setTopP(1F).build()
         val generativeModel = GenerativeModel("gemini-pro", generationConfig, vertexAi)
 
-        generativeModel.generateContent("You are AI assistant that plays a role. Your role is a woman, 46 years old, favorite topics Politics and Sports.")
+        generativeModel.generateContent(prompt)
           .getCandidates(0).content.getParts(0).text
       }
     } catch (exception: Exception) {
