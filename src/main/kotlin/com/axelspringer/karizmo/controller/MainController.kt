@@ -30,8 +30,11 @@ class MainController {
           GenerationConfig.newBuilder().setMaxOutputTokens(8192).setTemperature(0.9f).setTopP(1F).build()
         val generativeModel = GenerativeModel("gemini-pro", generationConfig, vertexAi)
 
-        generativeModel.generateContent(prompt)
-          .getCandidates(0).content.getParts(0).text
+        generativeModel.generateContent(prompt).candidatesList.map {
+          it.content.partsList.map {
+            it.text
+          }.joinToString()
+        }.joinToString()
       }
     } catch (exception: Exception) {
       println(exception)
